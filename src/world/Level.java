@@ -1,10 +1,6 @@
 package world;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import world.interactables.Gate;
 import world.interactables.Interactable;
@@ -13,7 +9,6 @@ import world.items.Item;
 import world.items.LightSource;
 
 public class Level {
-	BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	String[] globalCmd = { "go", "inventory" };
 
 	static HashMap<String, Room> rooms = new HashMap<String, Room>();
@@ -27,7 +22,7 @@ public class Level {
 		LightSource lighter = new LightSource("Lighter","With a flick of your thumb, the lighter flames alight.",
 				"You flick the cap of the lighter on, putting out the flame.",
 				"The lighter is old and worn, having seen many rainy days.");
-		Player.inventory.put("lighter", lighter);
+		Player.inventory.addItem(lighter);
 
 		current = new Room();
 		current.id = "entrance";
@@ -80,7 +75,7 @@ public class Level {
 
 			System.out.println();
 
-			String cmd = readCommand("Action");
+			String cmd = Utilities.readCommand("Action");
 
 			// Sjekker vi hvilken command brukeren skrev
 			switch (cmd) {
@@ -97,7 +92,7 @@ public class Level {
 				break;
 
 			case "inventory":
-				inventory();
+				Player.inventory.browse();
 				break;
 
 			default:
@@ -111,26 +106,13 @@ public class Level {
 		}
 	}
 
-	String readCommand(String type) {
-		// Leser vi inn brukerens command
-		System.out.print(type + "> ");
-		String cmd = "";
-		try {
-			cmd = in.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println();
-		return cmd;
-	}
-
 	void move() {
 		System.out.print("Direction: ");
 		for (String direction : current.movement.keySet())
 			System.out.print(direction + ", ");
 		System.out.println("cancel");
 
-		String direction = readCommand("Direction");
+		String direction = Utilities.readCommand("Direction");
 
 		if (current.movement.containsKey(direction)) {
 			current = rooms.get(current.movement.get(direction));
@@ -148,7 +130,7 @@ public class Level {
 			System.out.print(item + ", ");
 		System.out.println("cancel");
 
-		String item = readCommand("Item");
+		String item = Utilities.readCommand("Item");
 
 		if (current.interactables.containsKey(item)) {
 			if (interact)
@@ -159,45 +141,6 @@ public class Level {
 			return;
 		} else {
 			System.out.println("There is no such item here.");
-		}
-	}
-
-	void inventory() {
-		System.out.println("------------- Inventory -------------");
-		for (Item item : Player.inventory.values())
-			System.out.println(item.number + "x " + item.name);
-
-		System.out.println("\nWhat do you do?: interact inspect cancel");
-		String cmd = readCommand("Action");
-
-		boolean interact = false;
-
-		switch (cmd) {
-		case "interact":
-			interact = true;
-			break;
-
-		case "inspect":
-			interact = false;
-			break;
-
-		case "cancel":
-			return;
-
-		default:
-			System.out.println("You appear uncertain of what to do.");
-			return;
-		}
-
-		String item = readCommand("Item");
-
-		if (Player.inventory.containsKey(item)) {
-			if (interact)
-				Player.inventory.get(item).interact();
-			else
-				Player.inventory.get(item).inspect();
-		} else {
-			System.out.println("You could not find that item in your inventory.");
 		}
 	}
 

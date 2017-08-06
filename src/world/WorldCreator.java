@@ -1,7 +1,4 @@
 package world;
-/**
- * 
- */
 
 /**
  * @author ajsiv
