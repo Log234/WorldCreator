@@ -28,23 +28,32 @@ public class ItemStack {
 	public Item get() {
 		return stack.get(0);
 	}
-
-	public boolean add(Item item) {
-		if (item.name.equals(type)) {
-			stack.add(item);
-			return true;
-		} else
-			return false;
+	
+	public Item take() {
+		Item returned = stack.get(0);
+		stack.remove(0);
+		return returned;
+	}
+	
+	public ItemStack take(int amount) {
+		ItemStack newStack = new ItemStack();
+		
+		for (int i = 0; i < amount; i++) {
+			newStack.add(take());
+		}
+		
+		return newStack;
 	}
 
-
-	public boolean remove(int number) {
-		if (number <= stack.size()) {
-			for (int i = 0; i < number; i++)
-				stack.remove(0);
-			return true;
-		} else {
-			return false;
-		}
+	public Item add(Item item) {
+		if (item.name.equals(type)) {
+			stack.add(item);
+			return null;
+		} else if (type == null) {
+			type = item.name;
+			stack.add(item);
+			return null;
+		} else
+			return item;
 	}
 }

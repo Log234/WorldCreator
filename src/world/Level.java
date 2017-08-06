@@ -2,8 +2,10 @@ package world;
 
 import java.util.HashMap;
 
+import world.containers.Container;
 import world.interactables.Gate;
 import world.interactables.Interactable;
+import world.interactables.InteractableContainer;
 import world.interactables.Toggle;
 import world.items.Item;
 import world.items.LightSource;
@@ -14,20 +16,21 @@ public class Level {
 	static HashMap<String, Room> rooms = new HashMap<String, Room>();
 	public static HashMap<String, Interactable> interactables = new HashMap<String, Interactable>();
 	static HashMap<String, Item> items = new HashMap<String, Item>();
-	static Room current;
+	public static Room current;
 
 	boolean victory = false;
 
 	Level() {
 		LightSource lighter = new LightSource("Lighter","With a flick of your thumb, the lighter flames alight.",
 				"You flick the cap of the lighter on, putting out the flame.",
-				"The lighter is old and worn, having seen many rainy days.");
-		Player.inventory.addItem(lighter);
-
+				"The lighter is old and worn, the previous owner certainly must have used it a lot.");
+		InteractableContainer box = new InteractableContainer(new Container("box", 3, lighter), "The metal box is very dusty, some rust has started eating away at the bottom of it.", "With some squeeking from the rusty hinges, the box swinges easily open.");
+		Level.interactables.put("oldBox", box);
 		current = new Room();
 		current.id = "entrance";
-		current.description = "You enter the pyramid, it's dark and damp. There is one passage ahead of you.";
+		current.description = "You enter the pyramid, it's dark and damp. There is one passage ahead of you and there is a small box in the dust to the left of you.";
 		current.movement.put("forward", "hallway");
+		current.interactables.put("box", "oldBox");
 		rooms.put(current.id, current);
 
 		current = new Room();
